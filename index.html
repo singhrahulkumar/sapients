@@ -1,0 +1,206 @@
+<! DOCTYPE html>
+<html>
+<head>
+<style>
+<!-- div { -->
+<!-- border : 1px solid black; -->
+<!-- color : white; -->
+<!-- background : red; -->
+<!-- margin: auto; -->
+<!-- position: absolute; -->
+<!-- top: 0; -->
+<!-- left: 0; -->
+<!-- bottom: 0; -->
+<!-- right: 0; -->
+<!-- } -->
+
+.Absolute-Center {
+  display: flex; // make us of Flexbox
+  align-items: center; // does vertically center the desired content
+  justify-content: center; // horizontally centers single line items
+  text-align: center; // optional, but helps horizontally center text that breaks into multiple lines
+}
+
+.suggestion{
+     margin-top: 0;
+    list-style: none;
+    padding-left: 0;
+    width: 163px;
+    border: 1px solid black;
+    overflow-y: auto;
+    max-height: 157px;
+}
+
+.suggestion li:not(:last-of-type){
+    border-bottom: 1px solid #999;
+}
+
+.suggestion-active,
+.suggestion li:hover {
+  background-color: #008f68;
+  color: #fae042;
+  cursor: pointer;
+  font-weight: 700;
+}
+</style>
+<script>
+// reverse single link list
+function valueAtIndex(list,index){
+let current = list,count = 0;
+while(count < index && current !== null){
+current = current.next;
+count++;
+}
+console.log(current!== null ?current.value:null);
+}
+function createList(){
+let items = [5,3,2,8,9];
+let head = null;
+items.forEach(item => {
+head = {value:item,next:head};
+})
+return head;
+}
+
+function traverseList(list){
+console.log(list);
+let current = list;
+while(current!== null){
+console.log(current.value);
+current = current.next;
+}
+}
+
+function reverse(list){
+let prev = null,next = null,current = list;
+while(current!== null){
+next = current.next;
+current.next = prev;
+prev = current;
+current = next;
+}
+
+list =prev;;
+
+traverseList(list);
+}
+
+let list = createList();
+traverseList(list);
+reverse(list);
+valueAtIndex(list,3);
+valueAtIndex(list,8);
+
+
+// end reverse single link list
+
+
+// bfs algorithm
+function bfs(matrix,vertex){
+let visited =[],waiting = [];
+for(let i =0; i < matrix.length;i++){
+visited[i] =0;
+}
+waiting.push(vertex);
+while(waiting.length){
+let node = waiting.shift();
+visited[node] = 1;
+console.log(node);
+for(let i =0; i<matrix.length;i++){
+if(matrix[node][i] === 1 && node !== i && visited[i]!==1){
+waiting.push(i);
+}
+
+}
+
+}
+
+}
+// bfs algorithm
+// dfs algorithm
+function dfs(matrix,visited,vertex){
+visited[vertex] = 1;
+console.log(vertex);
+for(let j =0;j < matrix.length;j++){
+if(vertex!==j && visited[j] === 0 && matrix[vertex][j] === 1){
+dfs(matrix,visited,j);
+}
+}
+}
+
+function friendCircle(matrix){
+let maxGroup = 0;
+let visited = [];
+for(let i=0; i< matrix.length; i++){
+visited[i] = 0;
+}
+
+for(let i =0; i < matrix.length;i++){
+if(!visited[i]){
+maxGroup += 1;
+//visited[i] = 1;
+dfs(matrix,visited,i);
+}
+
+}
+return maxGroup;
+
+}
+let matrix = [[1,0,1,0,1],[0,1,1,0,0],[1,1,1,1,0],[0,0,1,1,0],[1,0,0,0,1]];
+console.log("max group is",friendCircle(matrix));
+
+bfs(matrix,0);
+// end dfs algorithm
+
+function getValueFromUrl(count){
+return new Promise((resolve,reject) => {
+fetch('http://localhost:4000/dish/'+count)
+.then(response => response.json())
+.then(data => {
+resolve(data);
+})
+})
+}
+async function solution(docs){
+for(let i =0;i < docs.length;i++){
+let response = await fetch('http://localhost:4000/dish/'+docs[i].getAttribute('data-count'));
+let dishes = await response.json();
+dishes.forEach(dish =>{
+let commentDiv = document.createElement('div');
+  commentDiv.classList.add('comment-list');
+  let commentNode = document.createTextNode(dish.name);
+  commentDiv.appendChild(commentNode);
+  docs[i].appendChild(commentDiv);
+})
+}
+return docs
+} // close function
+  
+  let doc1 = document.createElement('div');
+  doc1.classList.add('comment');
+  doc1.setAttribute('data-count',10);
+  let doc2 = document.createElement('div');
+  doc2.classList.add('comment');
+  doc2.setAttribute('data-count',15);
+  async function a(){
+  let res = await solution([doc1,doc2]);
+  res.forEach(data =>{
+  console.log("doc",data);
+  })
+  
+  }
+  a();
+  
+  function showSuggestion(){
+  }
+
+</script>
+</head>
+<body>
+<input type = 'text' onchange="showSuggestion()"/>
+<ul class="suggestion">
+<li>rahul</li>
+<li>gowri</li>
+</ul>
+</body>
+</html>
